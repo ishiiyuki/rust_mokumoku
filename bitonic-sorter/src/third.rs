@@ -71,8 +71,10 @@ where F: Fn(&T,&T) -> Ordering
 // このモジュールはcargo testを実行したときのみコンパイルされる
 #[cfg(test)]
 mod tests{
-    use super::{sort,sort_by};
+    use super::{sort, sort_by};
     use crate::SortOrder::*;
+    use crate::utils::{new_u32_vec, is_sorted_ascending, is_sorted_descending};
+
 
     // 構造体Studentを定義する
     // 構造体は関連する値を1つにまとめたデータ構造。複数のデータフィールドを持つ
@@ -117,6 +119,23 @@ mod tests{
         let mut x: Vec<u32> = vec![10, 30, 11, 20, 4, 330, 21, 110];
         assert_eq!(sort(&mut x, &Descending), Ok(()));
         assert_eq!(x, vec![330, 110, 30, 21, 20, 11, 10, 4]);
+    }
+
+
+//
+    #[test]
+    fn sort_u32_large(){
+        {
+            let mut x = new_u32_vec(65536);
+
+            assert_eq!(sort(&mut x, &Ascending) , Ok(()));
+            assert!(is_sorted_ascending(&x));
+        }
+        {
+            let mut x = new_u32_vec(65536);
+            assert_eq!(sort(&mut x, &Descending) , Ok(()));
+            assert!(is_sorted_descending(&x));
+        }
     }
 
     #[test]
